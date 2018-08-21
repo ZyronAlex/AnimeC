@@ -1,0 +1,60 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        applicationId "com.tecapps.AnimeC"
+
+        manifestPlaceholders = [onesignal_app_id: "3d83dcd2-b81c-45fc-b56a-7cac93874960",
+                                // Project number pulled from dashboard, local value is ignored.
+                                onesignal_google_project_number: "REMOTE"]
+
+        minSdkVersion 17
+        targetSdkVersion 27
+        versionCode 4
+        versionName "1.3"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/fonts'] } }
+
+    buildTypes.each {
+        it.buildConfigField 'String','server_url',app_url
+        it.buildConfigField 'String','server_app_key',app_key
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    testApi 'junit:junit:4.12'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+    implementation 'com.google.android.gms:play-services-gcm:15.0.1'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.1'
+    implementation 'com.onesignal:OneSignal:3.+@aar'
+    api files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation 'me.relex:circleindicator:1.2.2@aar'
+    implementation 'cn.gavinliu.android.lib:ShapedImageView:0.8.4'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    api project(':httpclient')
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    api project(':androidsaripaarmaster')
+    implementation 'com.github.ornolfr:rating-view:0.1.2@aar'
+    implementation 'com.google.android.ads.consent:consent-library:1.0.6'
+}

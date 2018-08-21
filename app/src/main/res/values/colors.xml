@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1e17ae</color>
+    <color name="colorPrimaryDark">#3832f7</color>
+    <color name="colorAccent">#a09bd7</color>
+
+    <color name="drawer_text">#888888</color>
+    <color name="app_bg">#E7E7E7</color>
+    <color name="app_home_bg">#E7E7E7</color>
+    <color name="app_card_bg">#E7E7E7</color>
+    <color name="black">#323232</color>
+    <color name="white">#ffffff</color>
+    <color name="timer_text">#6834BC</color>
+    <color name="black_transparent">#99000000</color>
+    <color name="black_light">#666666</color>
+    <color name="gray_text">#7B7B7B</color>
+    <color name="devby_bg">#E7E7E7</color>
+    <color name="dev_text">#7B7B7B</color>
+    <color name="blue_text">#6834BC</color>
+    <color name="orange_text">#DEA433</color>
+</resources>

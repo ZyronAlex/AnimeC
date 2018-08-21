@@ -1,0 +1,83 @@
+<resources>
+    <string name="app_name">AnimeC</string>
+    <string name="drawer_open">Abrir</string>
+    <string name="drawer_close">Fechar</string>
+    <string name="no_item_found">Nenhum item encontrado !!</string>
+    <string name="no_fav_found">Nenhum item favorito encontrado !!</string>
+    <string name="dev_by">Developed by:</string>
+    <string name="latest_video">Episódios Recentes</string>
+    <string name="all_video">Todos Episódios Recentes</string>
+    <string name="home_videos">Animes, Tv e Filmes</string>
+    <string name="leave_comment">Deixe seu comentário</string>
+    <string name="loading">Carregando...</string>
+      <string name="comment_success">Comentario postado com sucesso...</string>
+    <string name="search">Procurar</string>
+    <string name="remember_me">Lembre de mim</string>
+
+    <string name="login_email">Email</string>
+    <string name="login_pass">Senha</string>
+    <string name="login_name">Nome</string>
+    <string name="login_phone">Telefone</string>
+    <string name="login">Login</string>
+    <string name="skip">Pular</string>
+    <string name="forgot_pass">Esqueceu a senha ?</string>
+    <string name="forgot_pass_title">Esqueceu a senha</string>
+     <string name="register">Registo</string>
+    <string name="already_have_an_account_yet">Já tem uma conta?</string>
+    <string name="register_login_text">Login</string>
+    <string name="submit">Enviar</string>
+    <string name="rating">Avaliação</string>
+    <string name="thank_rating">Obrigado por avaliar</string>
+    <string name="ok_ok">SIM</string>
+    <string name="ok_no">NÃO</string>
+    <string name="login_msg">Você precisa fazer o login primeiro</string>
+    <string name="profile_name">Nome :-</string>
+    <string name="profile_pass">Senha :-</string>
+    <string name="profile_email">Email :-</string>
+    <string name="profile_phone">Telefone :-</string>
+    <string name="profile_save">Salvar</string>
+    <string name="profile_edit">Editar</string>
+    <string name="profile_title">Perfil</string>
+    <string name="profile_edit_title">Editar Perfil</string>
+
+    <!-- other message -->
+    <string name="more_btn">Mais</string>
+    <string name="related_name">Você pode gostar</string>
+    <string name="network_msg">Nenhuma conexão de rede!!!</string>
+    <string name="no_data_found">Nenhum dado encontrado!!</string>
+    <string name="share_video_msg">Oi, eu acabei de assistir este vídeo</string>
+    <string name="shareapp_msg">Baixe este aplicativo a partir deste link</string>
+    <string name="add_favorite_msg">Adicionado aos Favoritos</string>
+    <string name="remove_favorite_msg">Removido dos Favoritos</string>
+    <string name="header_title">user@gmail.com</string>
+
+    <!--Drawer Menu -->
+    <string name="menu_allvideo">Todos os Animes, Tv e Filmes</string>
+    <string name="menu_home">Início</string>
+    <string name="menu_latest">Mais recentes</string>
+    <string name="menu_category">Animes, Tv e Filmes</string>
+    <string name="menu_favorite">Meu favorito</string>
+    <string name="menu_about">Sobre nós</string>
+    <string name="menu_share">Compartilhe o aplicativo</string>
+    <string name="menu_rate">Avaliar aplicativo</string>
+    <string name="menu_privacy">Privacy Policy</string>
+    <string name="menu_title">Comunicar</string>
+
+    <!-- about us -->
+    <string name="version">Versão</string>
+    <string name="author">Autor</string>
+    <string name="company">Desenvolvedor</string>
+    <string name="email">Email</string>
+    <string name="website">Website</string>
+    <string name="contact">Contato</string>
+    <string name="about">Sobre</string>
+
+    <!-- youtube -->
+    <string name="error_player">Houve um erro ao inicializar o YouTubePlayer (%1$s)</string>
+    <string name="youtube_api_key">AIzaSyAYJwy6nzCFqgr5LtihRI3YuVBb_34aprw</string>
+    <string name="loading_video">Carregando video aguarde</string>
+
+    <!--if you want rtl change value of isRTL to true else false-->
+    <string name="isRTL">false</string>
+
+</resources>
