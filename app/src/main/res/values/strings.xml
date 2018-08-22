@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">AnimeC</string>
+    <string name="app_chrome_cast_id">4F8B3483</string>
     <string name="drawer_open">Abrir</string>
     <string name="drawer_close">Fechar</string>
     <string name="no_item_found">Nenhum item encontrado !!</string>
@@ -10,7 +11,7 @@
     <string name="home_videos">Animes, Tv e Filmes</string>
     <string name="leave_comment">Deixe seu comentário</string>
     <string name="loading">Carregando...</string>
-      <string name="comment_success">Comentario postado com sucesso...</string>
+    <string name="comment_success">Comentario postado com sucesso...</string>
     <string name="search">Procurar</string>
     <string name="remember_me">Lembre de mim</string>
 
@@ -22,7 +23,7 @@
     <string name="skip">Pular</string>
     <string name="forgot_pass">Esqueceu a senha ?</string>
     <string name="forgot_pass_title">Esqueceu a senha</string>
-     <string name="register">Registo</string>
+    <string name="register">Registo</string>
     <string name="already_have_an_account_yet">Já tem uma conta?</string>
     <string name="register_login_text">Login</string>
     <string name="submit">Enviar</string>
@@ -79,5 +80,6 @@
 
     <!--if you want rtl change value of isRTL to true else false-->
     <string name="isRTL">false</string>
+    <string name="action_settings">Configurações</string>
 
 </resources>

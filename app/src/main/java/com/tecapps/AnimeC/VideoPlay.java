@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import com.example.favorite.DatabaseHandler;
 import com.example.favorite.ItemDb;
 import com.example.item.ItemLatest;
 import com.example.item.ItemRelated;
+import com.example.play.MyPlayerActivity;
 import com.example.play.OpenYouTubePlayerActivity;
 import com.example.util.Constant;
 import com.example.util.ItemOffsetDecoration;
@@ -38,6 +40,11 @@ import com.example.util.JsonUtils;
 import com.example.vimeo.Vimeo;
 import com.example.youtube.YoutubePlay;
 import com.github.ornolfr.ratingview.RatingView;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastState;
+import com.google.android.gms.cast.framework.CastStateListener;
+import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.squareup.picasso.Picasso;
 import com.zanjou.http.debug.Logger;
 import com.zanjou.http.request.FileUploadListener;
@@ -79,6 +86,12 @@ public class VideoPlay extends AppCompatActivity {
     MyApplication MyApp;
     String deviceId;
     LinearLayout adLayout;
+    private CastContext mCastContext;
+    private MenuItem mediaRouteMenuItem;
+    private IntroductoryOverlay mIntroductoryOverlay;
+    private CastStateListener mCastStateListener;
+    private static final String TAG = "VideoPlay";
+    private boolean mIsHoneyCombOrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +109,17 @@ public class VideoPlay extends AppCompatActivity {
         }
         MyApp = MyApplication.getAppInstance();
         pDialog = new ProgressDialog(VideoPlay.this);
+
+        mCastStateListener = new CastStateListener() {
+            @Override
+            public void onCastStateChanged(int newState) {
+                if (newState != CastState.NO_DEVICES_AVAILABLE) {
+                    showIntroductoryOverlay();
+                }
+            }
+        };
+
+        mCastContext = CastContext.getSharedInstance(this);
 
         jsonUtils = new JsonUtils(this);
         jsonUtils.forceRTLIfSupported(getWindow());
@@ -261,10 +285,10 @@ public class VideoPlay extends AppCompatActivity {
                     // TODO Auto-generated method stub
 
                     if (video_type.equals("local")) {
-                        Intent lVideoIntent = new Intent(null, Uri.parse("file://" + video_url), VideoPlay.this, OpenYouTubePlayerActivity.class);
+                        Intent lVideoIntent = new Intent(null, Uri.parse("file://" + video_url), VideoPlay.this, MyPlayerActivity.class);
                         startActivity(lVideoIntent);
                     } else if (video_type.equals("server_url")) {
-                        Intent lVideoIntent = new Intent(null, Uri.parse("file://" + video_url), VideoPlay.this, OpenYouTubePlayerActivity.class);
+                        Intent lVideoIntent = new Intent(null, Uri.parse("file://" + video_url), VideoPlay.this, MyPlayerActivity.class);
                         startActivity(lVideoIntent);
                     } else if (video_type.equals("youtube")) {
                         Intent i = new Intent(VideoPlay.this, YoutubePlay.class);
@@ -305,10 +329,24 @@ public class VideoPlay extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        mCastContext.addCastStateListener(mCastStateListener);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mCastContext.removeCastStateListener(mCastStateListener);
+        super.onPause();
+    }
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.details_menu, menu);
         this.menu = menu;
+        mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
         FirstFav();
         return super.onCreateOptionsMenu(menu);
     }
@@ -357,8 +395,8 @@ public class VideoPlay extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(menuItem);
         }
-
     }
+
 
     public void AddtoFav() {
 
@@ -520,6 +558,32 @@ public class VideoPlay extends AppCompatActivity {
 
     public void dismissProgressDialog() {
         pDialog.dismiss();
+    }
+
+    private void showIntroductoryOverlay() {
+        if (mIntroductoryOverlay != null) {
+            mIntroductoryOverlay.remove();
+        }
+        if ((mediaRouteMenuItem != null) && mediaRouteMenuItem.isVisible()) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    mIntroductoryOverlay = new IntroductoryOverlay.Builder(
+                            VideoPlay.this, mediaRouteMenuItem)
+                            .setTitleText("Introducing Cast")
+                            .setSingleTime()
+                            .setOnOverlayDismissedListener(
+                                    new IntroductoryOverlay.OnOverlayDismissedListener() {
+                                        @Override
+                                        public void onOverlayDismissed() {
+                                            mIntroductoryOverlay = null;
+                                        }
+                                    })
+                            .build();
+                    mIntroductoryOverlay.show();
+                }
+            });
+        }
     }
 
 }
