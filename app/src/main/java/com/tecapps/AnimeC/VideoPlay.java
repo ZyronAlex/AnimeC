@@ -285,10 +285,12 @@ public class VideoPlay extends AppCompatActivity {
                     // TODO Auto-generated method stub
 
                     if (video_type.equals("local")) {
-                        Intent lVideoIntent = new Intent(null, Uri.parse("file://" + video_url), VideoPlay.this, MyPlayerActivity.class);
+                        Intent lVideoIntent = new Intent(VideoPlay.this, MyPlayerActivity.class);
+                        lVideoIntent.putExtra("media",objAllBean);
                         startActivity(lVideoIntent);
                     } else if (video_type.equals("server_url")) {
-                        Intent lVideoIntent = new Intent(null, Uri.parse("file://" + video_url), VideoPlay.this, MyPlayerActivity.class);
+                        Intent lVideoIntent = new Intent(VideoPlay.this, MyPlayerActivity.class);
+                        lVideoIntent.putExtra("media",objAllBean);
                         startActivity(lVideoIntent);
                     } else if (video_type.equals("youtube")) {
                         Intent i = new Intent(VideoPlay.this, YoutubePlay.class);
@@ -450,7 +452,6 @@ public class VideoPlay extends AppCompatActivity {
         });
         mDialog.show();
     }
-
 
     private void showLogin() {
 

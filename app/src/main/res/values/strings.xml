@@ -40,6 +40,8 @@
     <string name="profile_edit">Editar</string>
     <string name="profile_title">Perfil</string>
     <string name="profile_edit_title">Editar Perfil</string>
+    <string name="oops">Oops</string>
+    <string name="error">Error</string>
 
     <!-- other message -->
     <string name="more_btn">Mais</string>

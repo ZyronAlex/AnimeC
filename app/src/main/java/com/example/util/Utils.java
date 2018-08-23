@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.utils;
+package com.example.util;
+
+import com.tecapps.AnimeC.R;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,8 +27,6 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import com.google.sample.cast.refplayer.R;
 
 /**
  * A collection of utility methods, all static.

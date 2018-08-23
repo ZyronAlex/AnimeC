@@ -1,6 +1,8 @@
 package com.example.item;
 
-public class ItemLatest {
+import java.io.Serializable;
+
+public class ItemLatest implements Serializable {
 	
 	private String id;
 	private String CategoryId;

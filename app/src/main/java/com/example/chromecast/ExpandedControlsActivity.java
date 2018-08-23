@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.expandedcontrols;
+package com.example.chromecast;
 
 import android.view.Menu;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
-import com.google.sample.cast.refplayer.R;
+import com.tecapps.AnimeC.R;
 
 public class ExpandedControlsActivity extends ExpandedControllerActivity {
 
