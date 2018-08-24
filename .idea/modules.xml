@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AllInOneVideos_3.0.iml" filepath="$PROJECT_DIR$/AllInOneVideos_3.0.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AnimeC.iml" filepath="$PROJECT_DIR$/AnimeC.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidsaripaarmaster/androidsaripaarmaster.iml" filepath="$PROJECT_DIR$/androidsaripaarmaster/androidsaripaarmaster.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/httpclient/httpclient.iml" filepath="$PROJECT_DIR$/httpclient/httpclient.iml" />

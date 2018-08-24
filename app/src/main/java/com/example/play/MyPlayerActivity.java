@@ -1,35 +1,21 @@
 package com.example.play;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.VideoView;
-
 import com.androidquery.AQuery;
 import com.example.chromecast.ExpandedControlsActivity;
 import com.example.item.ItemLatest;
-import com.example.util.Utils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -38,13 +24,9 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
-import com.halilibo.bettervideoplayer.BetterVideoCallback;
 import com.halilibo.bettervideoplayer.BetterVideoPlayer;
 import com.tecapps.AnimeC.R;
-
 import java.util.Timer;
-import java.util.TimerTask;
-
 import static com.example.play.MyPlayerActivity.PlaybackLocation.REMOTE;
 import static com.example.play.MyPlayerActivity.PlaybackState.IDLE;
 
@@ -125,7 +107,7 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
 
             mPlaybackState = PlaybackState.PLAYING;
             updatePlaybackLocation(PlaybackLocation.LOCAL);
-            player.start();
+
         } else {
             if (mCastSession != null && mCastSession.isConnected()) {
                 updatePlaybackLocation(REMOTE);
@@ -144,7 +126,6 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
         super.onPause();
         Log.d(TAG, "onPause() was called");
         if (mLocation == PlaybackLocation.LOCAL) {
-
             if (mSeekbarTimer != null) {
                 mSeekbarTimer.cancel();
                 mSeekbarTimer = null;
@@ -193,7 +174,7 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.details_menu, menu);
+        getMenuInflater().inflate(R.menu.drawer_menu, menu);
         mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu,
                 R.id.media_route_menu_item);
         return true;
@@ -204,6 +185,7 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
         Intent intent;
         if (item.getItemId() == android.R.id.home) {
             ActivityCompat.finishAfterTransition(this);
+            onBackPressed();
         }
         return true;
     }
