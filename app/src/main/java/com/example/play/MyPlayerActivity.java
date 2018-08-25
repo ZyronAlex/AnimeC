@@ -1,21 +1,27 @@
 package com.example.play;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+
 import com.androidquery.AQuery;
 import com.example.chromecast.ExpandedControlsActivity;
 import com.example.item.ItemLatest;
+import com.example.util.Utils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -26,7 +32,9 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 import com.halilibo.bettervideoplayer.BetterVideoPlayer;
 import com.tecapps.AnimeC.R;
+
 import java.util.Timer;
+
 import static com.example.play.MyPlayerActivity.PlaybackLocation.REMOTE;
 import static com.example.play.MyPlayerActivity.PlaybackState.IDLE;
 
@@ -41,10 +49,8 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
     private PlaybackState mPlaybackState;
     private PlaybackLocation mLocation;
     private ItemLatest mSelectedMedia;
-    private Timer mSeekbarTimer;
-    private ImageView mCoverArt;
-    private final Handler mHandler = new Handler();
     private AQuery mAquery;
+    private Fragment castMiniController;
     private SessionManagerListener<CastSession> mSessionManagerListener;
 
     /**
@@ -79,42 +85,46 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
         player = (BetterVideoPlayer) findViewById(R.id.player);
 
         //Set Immediately starts playback when the player becomes prepared.
-        player.setAutoPlay(true);
+//        player.setAutoPlay(true);
 
         //Enable SwipeGestures
-        player.enableSwipeGestures();
         player.enableSwipeGestures(this.getWindow());
 
         // Sets the callback to this Activity, since it inherits EasyVideoCallback
         player.setCallback(this);
 
+        // Sets the function of Chrome Cast SDK
         mAquery = new AQuery(this);
         setupCastListener();
         mCastContext = CastContext.getSharedInstance(this);
         mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
+
+//        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//        castMiniController = new Fragment();
+//        castMiniController.setUserVisibleHint(false);
+//        castMiniController.getClass().a
+//        player.addView();
+
         // see what we need to play and where
         Bundle bundle = this.getIntent().getExtras();
         if (bundle != null) {
             mSelectedMedia = (ItemLatest) bundle.getSerializable("media");
-
-            Toolbar toolbar = player.getToolbar();
-            toolbar.setTitle(mSelectedMedia.getVideoName());
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+            setupActionBar();
+            Log.d(TAG, "Setting url of the VideoView to: " + mSelectedMedia.getVideoUrl());
             // To play files, you can use Uri.fromFile(new File("..."))
             player.setSource(Uri.parse(mSelectedMedia.getVideoUrl()));
-
-            mPlaybackState = PlaybackState.PLAYING;
-            updatePlaybackLocation(PlaybackLocation.LOCAL);
-
-        } else {
             if (mCastSession != null && mCastSession.isConnected()) {
-                updatePlaybackLocation(REMOTE);
-            } else {
+                // this will be the case only if we are coming from the
+                // CastControllerActivity by disconnecting from a device
                 updatePlaybackLocation(PlaybackLocation.LOCAL);
+                player.start();
+            } else {
+                // we should load the video but pause it
+                // and show the album art.
+                updatePlaybackLocation(PlaybackLocation.REMOTE);
+                loadRemoteMedia(player.getCurrentPosition(), true);
             }
-            mPlaybackState = IDLE;
         }
 
         // From here, the player view will show a progress indicator until the player is prepared.
@@ -125,16 +135,6 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() was called");
-        if (mLocation == PlaybackLocation.LOCAL) {
-            if (mSeekbarTimer != null) {
-                mSeekbarTimer.cancel();
-                mSeekbarTimer = null;
-            }
-            // since we are playing locally, we need to stop the playback of
-            // video (if user is not watching, pause it!)
-            player.pause();
-            mPlaybackState = PlaybackState.PAUSED;
-        }
         mCastContext.getSessionManager().removeSessionManagerListener(
                 mSessionManagerListener, CastSession.class);
     }
@@ -148,7 +148,6 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy() is called");
-        stopTrickplayTimer();
         super.onDestroy();
     }
 
@@ -174,7 +173,7 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.drawer_menu, menu);
+        getMenuInflater().inflate(R.menu.browse, menu);
         mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu,
                 R.id.media_route_menu_item);
         return true;
@@ -190,19 +189,18 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
         return true;
     }
 
-    // Methods for the implemented EasyVideoCallback
 
+    // Methods for the implemented EasyVideoCallback
     @Override
     public void onStarted(BetterVideoPlayer player) {
         Log.i(TAG, "Started");
+        mPlaybackState = PlaybackState.PLAYING;
     }
 
     @Override
     public void onPaused(BetterVideoPlayer player) {
         Log.i(TAG, "Paused");
-        if (mLocation == PlaybackLocation.LOCAL) {
-            togglePlayback();
-        }
+        mPlaybackState = PlaybackState.PAUSED;
     }
 
     @Override
@@ -213,25 +211,30 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
     @Override
     public void onPrepared(BetterVideoPlayer player) {
         Log.i(TAG, "Prepared");
+        mPlaybackState = PlaybackState.IDLE;
+        updatePlayButton(mPlaybackState);
     }
 
     @Override
     public void onBuffering(int percent) {
         Log.i(TAG, "Buffering " + percent);
+        mPlaybackState = PlaybackState.BUFFERING;
     }
 
     @Override
     public void onError(BetterVideoPlayer player, Exception e) {
         Log.i(TAG, "Error " + e.getMessage());
+        Utils.showErrorDialog(MyPlayerActivity.this, e.getLocalizedMessage());
         player.stop();
         mPlaybackState = PlaybackState.IDLE;
+        updatePlayButton(mPlaybackState);
     }
 
     @Override
     public void onCompletion(BetterVideoPlayer player) {
         Log.i(TAG, "Completed");
-        stopTrickplayTimer();
         mPlaybackState = PlaybackState.IDLE;
+        updatePlayButton(mPlaybackState);
     }
 
     @Override
@@ -246,7 +249,6 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        stopTrickplayTimer();
         player.pause();
     }
 
@@ -261,7 +263,6 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
 
 
     //Methods for Chrome Cast SDK
-
     private void setupCastListener() {
         mSessionManagerListener = new SessionManagerListener<CastSession>() {
 
@@ -363,50 +364,6 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
         }
     }
 
-    private void togglePlayback() {
-        switch (mPlaybackState) {
-            case PAUSED:
-                mPlaybackState = PlaybackState.PAUSED;
-                break;
-
-            case PLAYING:
-                switch (mLocation) {
-                    case LOCAL:
-                        Log.d(TAG, "Playing locally...");
-                        mPlaybackState = PlaybackState.PLAYING;
-                        updatePlaybackLocation(PlaybackLocation.LOCAL);
-                        break;
-                    case REMOTE:
-                        finish();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            case IDLE:
-                switch (mLocation) {
-                    case LOCAL:
-                        player.setSource(Uri.parse(mSelectedMedia.getVideoUrl()));
-                        player.seekTo(0);
-                        player.start();
-                        mPlaybackState = PlaybackState.PLAYING;
-                        updatePlaybackLocation(PlaybackLocation.LOCAL);
-                        break;
-                    case REMOTE:
-                        if (mCastSession != null && mCastSession.isConnected()) {
-                            loadRemoteMedia(player.getCurrentPosition(), true);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     private void updatePlaybackLocation(PlaybackLocation location) {
         mLocation = location;
         if (location == PlaybackLocation.LOCAL) {
@@ -463,15 +420,24 @@ public class MyPlayerActivity extends AppCompatActivity implements MyBetterVideo
 
     private void setCoverArtStatus(String url) {
         if (url != null)
-            mAquery.id(mCoverArt).image(url);
+            mAquery.id(player).image(url);
     }
 
-    private void stopTrickplayTimer() {
-        Log.d(TAG, "Stopped TrickPlay Timer");
-        if (mSeekbarTimer != null) {
-            mSeekbarTimer.cancel();
-        }
+    private void setupActionBar() {
+        Toolbar toolbar = player.getToolbar();
+        toolbar.setTitle(mSelectedMedia.getVideoName());
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private void updatePlayButton(PlaybackState state) {
+        Log.d(TAG, "Controls: PlayBackState: " + state);
+        boolean isConnected = (mCastSession != null)
+                && (mCastSession.isConnected() || mCastSession.isConnecting());
+        if(isConnected)
+            player.hideControls();
+        else
+            player.showControls();
+    }
 
 }
