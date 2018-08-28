@@ -6,4 +6,6 @@ xmlns:tools="http://schemas.android.com/tools"
 android:id="@+id/player"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context="com.example.play.MyPlayerActivity"/>
+tools:context="com.example.play.MyPlayerActivity">
+    <include layout="@layout/fragment_cast_mini_controller"/>
+</com.halilibo.bettervideoplayer.BetterVideoPlayer>
